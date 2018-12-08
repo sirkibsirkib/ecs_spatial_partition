@@ -1,0 +1,13 @@
+[package]
+name = "ecs_spatial_partition"
+version = "0.1.0"
+authors = ["sirkibsirkib <christopher.esterhuyse@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+specs = "0.14"
+specs-derive = "0.3"
+rand = "0.6"
+simple-vector2d = "0.1"
+smallset = "0.1"
