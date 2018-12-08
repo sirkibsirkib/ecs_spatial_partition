@@ -39,7 +39,7 @@ struct GameState<'a, 'b> {
 impl<'a, 'b> GameState<'a, 'b> {
     pub fn new(ctx: &mut Context) -> Self {
         let mut world = World::new();
-        let sleep_time = time::Duration::from_millis(200);
+        let _sleep_time = time::Duration::from_millis(200);
 
         // define screen dims
         // let (w, h) = (40, 20);

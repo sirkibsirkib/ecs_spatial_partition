@@ -42,7 +42,7 @@ impl<'a> System<'a> for BumpSystem {
     type SystemData = (ReadStorage<'a, Pos>, WriteStorage<'a, Transform>);
 
     fn run(&mut self, (pos, mut tra): Self::SystemData) {
-        for (p, mut t) in (&pos, &mut tra).join() {
+        for (_p, t) in (&pos, &mut tra).join() {
             let new_t = Transform(Vector2(
                 self.x_dist.sample(&mut self.rng),
                 self.y_dist.sample(&mut self.rng),
@@ -58,7 +58,7 @@ impl<'a> System<'a> for PhysicsSystem {
 
     fn run(&mut self, (mut pos, mut tra): Self::SystemData) {
         // for (mut p, mut t) in (&mut pos, &mut tra).join() {
-        (&mut pos, &mut tra).par_join().for_each(|(mut p, mut t)| {
+        (&mut pos, &mut tra).par_join().for_each(|(p, mut t)| {
             p.0 += t.0;
             t.0 = Vector2(0., 0.);
         })
@@ -133,5 +133,5 @@ pub struct AiSystem;
 impl<'a> System<'a> for AiSystem {
     type SystemData = ReadStorage<'a, Pos>;
 
-    fn run(&mut self, pos: Self::SystemData) {}
+    fn run(&mut self, _pos: Self::SystemData) {}
 }
