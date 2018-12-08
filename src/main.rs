@@ -4,29 +4,24 @@ use crate::systems::*;
 mod components;
 use crate::components::*;
 
-
 use ggez::{
     conf,
     event::{self, Keycode, Mod},
-    graphics::{self, spritebatch::SpriteBatch, Color, DrawMode, Mesh, Point2},
+    graphics::{self, DrawMode, Mesh, Point2},
     timer, Context, GameResult,
 };
 use rand::{
     distributions::{Distribution, Uniform},
     rngs::StdRng,
-    Rng, SeedableRng,
+    SeedableRng,
 };
-use rayon::iter::ParallelIterator;
 use simple_vector2d::Vector2;
-use smallset::SmallSet;
 use specs::{
-    world::Builder, Component, Dispatcher, Entities, Entity, Join, ParJoin, ReadStorage, System,
-    VecStorage, World, WriteStorage,
+    world::Builder, Dispatcher,  Join,
+    World,
 };
-use specs_derive::Component as SComponent;
 use std::{
-    collections::{HashMap, HashSet},
-    env, path, thread, time,
+    env, path, time,
 };
 
 const DESIRED_UPS: u32 = 30;
@@ -48,6 +43,7 @@ impl<'a, 'b> GameState<'a, 'b> {
         let d_builder = specs::DispatcherBuilder::new()
             .with(BumpSystem::new(), "BumpSystem", &[])
             .with(AiSystem, "AiSystem", &[])
+            .with(CollisionSystem::new(), "CollisionSystem", &[])
             .with(PhysicsSystem, "PhysicsSystem", &["BumpSystem"]);
 
         d_builder.print_par_seq();
@@ -111,7 +107,7 @@ impl<'a, 'b> event::EventHandler for GameState<'a, 'b> {
                 dest: Point2::new(pt.0, pt.1),
                 ..Default::default()
             };
-            graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
             // Ok(())
         }
         // });
