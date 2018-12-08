@@ -76,7 +76,15 @@ impl<'a> System<'a> for PhysicsSystem {
     }
 }
 
-type GridCoord = (i8, i8);
+#[derive(Copy, Clone, Debug)]
+struct GridCoord(i8, i8);
+impl GridCoord {
+    fn closeby(self) -> impl Iterator<Item = Self> {
+        ((self.0 - 1)..=(self.0 + 1))
+            .map(move |x| ((self.1 - 1)..=(self.1 + 1)).map(move |y| GridCoord(x, y)))
+            .flatten()
+    }
+}
 struct CollisionSystem {
     grid: HashMap<(i8, i8), HashSet<Entity>>,
 }
@@ -88,7 +96,7 @@ impl CollisionSystem {
     }
     fn categorize(pos: &Pos) -> GridCoord {
         let v = pos.0;
-        ((v.0 * 0.2) as i8, (v.1 * 0.2) as i8)
+        GridCoord((v.0 * 0.2) as i8, (v.1 * 0.2) as i8)
     }
 }
 impl<'a> System<'a> for CollisionSystem {
@@ -100,11 +108,16 @@ impl<'a> System<'a> for CollisionSystem {
 
     fn run(&mut self, (ent, pos, mut tra): Self::SystemData) {
         self.grid.clear();
-        for (e, p, mut t) in (&ent, &pos, &mut tra).join() {
+        for (e, p) in (&ent, &pos).join() {
             self.grid
                 .entry(Self::categorize(p))
                 .or_insert_with(HashSet::new)
                 .insert(e);
+        }
+        for group in self.grid.values() {
+            for (coord, e1) in group.iter() {
+                
+            }
         }
     }
 }
