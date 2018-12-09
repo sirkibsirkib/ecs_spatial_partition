@@ -134,8 +134,6 @@ impl<'a> System<'a> for CollisionSystem {
         WriteStorage<'a, Transform>,
     );
     fn run(&mut self, (ent, col, pos, mut tra): Self::SystemData) {
-        let start = time::Instant::now();
-
         self.0.clear();
         // O(NlogN)
         (&ent, &col, &pos, &tra).join().for_each(|(e, c, p, _t)| {
@@ -148,14 +146,14 @@ impl<'a> System<'a> for CollisionSystem {
                 Err(pos) => self.0.insert(pos, c1d),
             }
         });
-        let mut count = 0;
-        let mut real_count = 0;
-
+        // let mut count = 0;
+        // let mut real_count = 0;
 
         for (i, col1) in self.0.iter().enumerate() {
             for col2 in self.0[(i + 1)..].iter() {
-                if col2.range.0 < col1.range.1 { // their leftmostpt is < my rightmostpt
-                    count += 1;
+                if col2.range.0 < col1.range.1 {
+                    // their leftmostpt is < my rightmostpt
+                    // count += 1;
                     /*
                         [col2]
                         .0  .1
@@ -169,7 +167,7 @@ impl<'a> System<'a> for CollisionSystem {
                         pos.get(col2.ent).unwrap(),
                         col.get(col2.ent).unwrap(),
                     ) {
-                        real_count += 1;
+                        // real_count += 1;
 
                         let t1 = tra.get_mut(col1.ent).unwrap();
                         t1.0 += bump_to_1;
@@ -181,13 +179,13 @@ impl<'a> System<'a> for CollisionSystem {
                 }
             }
         }
-        println!(
-            "count {:#3} / {:#3} ({:#3.0}%). took {:?}",
-            real_count,
-            count,
-            (real_count as f32 / count as f32) * 100.0,
-            start.elapsed()
-        );
+        // println!(
+        //     "count {:#3} / {:#3} ({:#3.0}%). took {:?}",
+        //     real_count,
+        //     count,
+        //     (real_count as f32 / count as f32) * 100.0,
+        //     start.elapsed()
+        // );
     }
 }
 

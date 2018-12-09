@@ -70,8 +70,10 @@ impl<'a, 'b> GameState<'a, 'b> {
     }
 
     pub fn update_tick(&mut self) {
+        let start = time::Instant::now();
         self.dispatcher.dispatch(&self.world.res);
         self.world.maintain();
+        println!("update took {:?}", start.elapsed());
     }
 }
 
@@ -91,6 +93,7 @@ impl<'a, 'b> event::EventHandler for GameState<'a, 'b> {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let start = time::Instant::now();
         let pos = self.world.read_storage::<Pos>();
         graphics::clear(ctx);
         for p in (&pos).join() {
@@ -100,7 +103,15 @@ impl<'a, 'b> event::EventHandler for GameState<'a, 'b> {
                 ..Default::default()
             };
             let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
+            let _ = graphics::draw_ex(ctx, &self.circle, param);
         }
+        println!("render took {:?}", start.elapsed());
+        println!("average fps {:?}", timer::get_fps(ctx));
         graphics::present(ctx);
         timer::yield_now();
         Ok(())
@@ -108,7 +119,7 @@ impl<'a, 'b> event::EventHandler for GameState<'a, 'b> {
 }
 
 fn main() {
-    let c = conf::Conf::new();
+    let c = conf::Conf::default();
     let mut ctx = &mut Context::load_from_conf("super_simple", "ggez", c).unwrap();
     if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
         let mut path = path::PathBuf::from(manifest_dir);
