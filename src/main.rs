@@ -36,6 +36,7 @@ impl<'a, 'b> GameState<'a, 'b> {
         let d_builder = specs::DispatcherBuilder::new()
             .with(BumpSystem::new(), "BumpSystem", &[])
             .with(CollisionSystem::new(), "CollisionSystem", &[])
+            .with(AiSystem, "Ai", &[])
             .with_barrier()
             .with(PhysicsSystem, "PhysicsSystem", &[]);
         d_builder.print_par_seq();
@@ -71,7 +72,7 @@ impl<'a, 'b> GameState<'a, 'b> {
 
     pub fn update_tick(&mut self) {
         let start = time::Instant::now();
-        self.dispatcher.dispatch(&self.world.res);
+        self.dispatcher.dispatch_par(&self.world.res);
         self.world.maintain();
         println!("update took {:?}", start.elapsed());
     }
